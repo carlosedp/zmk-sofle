@@ -16,7 +16,7 @@
 
 &msc {
     acceleration-exponent = <1>;      // 0
-    time-to-max-speed-ms = <100>;       // 300
+    time-to-max-speed-ms = <100>;     // 300
     delay-ms = <0>;                   // 0
 };
 
@@ -92,6 +92,9 @@
             label = "SNAPSHOT_MAC_FILE";
         };
     };
+
+// Bottom left key is the encoder click
+// Column 7 (middle column) is the joystick from the right half
 
     keymap {
         compatible = "zmk,keymap";
