@@ -1,7 +1,72 @@
-# Sofle
+# Sofle v2 low-profile Wireless Mechanical Keyboard
 
-- [Chinese](README.md)
-- [English](README_EN.md)
+This repo contains the ZMK firmware for the Sofle v2 low-profile wireless mechanical keyboard, which is an enhanced version of the original Sofle keyboard. The keyboard features a low-profile design, wireless connectivity, and a built-in display on the right-hand side.
+
+
+## Documentation
+
+- [ZMK Firmware](https://zmk.dev/docs)
+- 
+
+
+## Building and Flashing
+
+All changes pushed to the repository trigger a build in GitHub Actions. You can download the latest firmware artifacts from the [Actions tab](https://github.com/carlosedp/zmk-sofle/actions/workflows/build.yml).
+
+Download the generated `.zip` file and extract the three `.bin` files. One is the settings reset firmware that can be used to reset the keyboard settings if needed (same for both sides). The other two files are the left and right keyboard firmwares.
+
+Press switch inside the circular hole on the back of the keyboard to reset.
+
+Double clicking it will enter the Bootloader state. A drive will be shown in your computer where you can copy the corresponding `.bin` or `.uf2` file to flash the keyboard. Do this for both sides.
+
+The toggle switches on the top and bottom of the left and right keyboards are both turned to the outer side, which is the battery switch.
+
+If changing just the keymap or settings, flashing only one side (usually the left) is sufficient.
+
+## Building Locally
+
+```sh
+git clone https://github.com/carlosedp/zmk-soufle.git
+cd zmk-soufle
+
+podman run -it --rm --security-opt label=disable --workdir /zmk -v $(pwd):/zmk -v /tmp:/temp docker.io/zmkfirmware/zmk-build-arm:4.1-branch /bin/bash
+
+west init -l config && west update
+
+export "CMAKE_PREFIX_PATH=/zmk/zephyr:$CMAKE_PREFIX_PATH"
+
+# Build left half
+west build -d ./build/left -p \
+  -b "eyelash_sofle_left" \
+  -s /zmk/zmk/app \
+  -S studio-rpc-usb-uart \
+  -- -DSHIELD="nice_view_gem" -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n \
+  -DZMK_CONFIG="/zmk/config" \
+  -DZMK_EXTRA_MODULES="/zmk/eyelash_sofle"
+
+# Build right half
+west build -d ./build/right -p \
+  -b "eyelash_sofle_right" \
+  -s /zmk/zmk/app \
+  -- -DSHIELD="nice_view_gem" \
+  -DZMK_CONFIG="/zmk/config" \
+  -DZMK_EXTRA_MODULES="/zmk/eyelash_sofle"
+
+# Settings Reset
+west build -d ./build/settings_reset -p \
+  -b "nice_nano_v2" \
+  -s /zmk/zmk/app \
+  -- -DSHIELD="settings_reset" \
+  -DZMK_CONFIG="/zmk/config" \
+  -DZMK_EXTRA_MODULES="/zmk/eyelash_sofle"
+
+# The resulting .bin files will be located in the respective build directories:
+# ./build/left/zephyr/zmk.uf2
+# ./build/right/zephyr/zmk.uf2
+# ./build/settings_reset/zephyr/zmk.uf2
+```
+
+To flash the firmware, follow the same procedure as described in the "Building and Flashing" section above, using the generated `.uf2` files.
 
 ## Update List
 
