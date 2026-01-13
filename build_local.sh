@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
+#
+# ZMK Firmware Local Build Script
+#
+# This script automates building ZMK keyboard firmware locally using containerized
+# build environments (Podman/Docker). It dynamically reads build configurations from
+# build.yaml and manages west dependencies from config/west.yml.
+#
+# Features:
+#   - Automatic initialization and dependency management
+#   - Dynamic configuration from YAML files (no hardcoded targets)
+#   - Build all firmware or specific targets
+#   - Incremental builds for faster development
+#   - Clean management (build artifacts or full dependencies)
+#   - Auto-generated .gitignore from west.yml
+#   - Build artifact copying with timestamping
+#
+# Quick Start:
+#   ./build_local.sh build          # Initialize (if needed) and build all firmware
+#   ./build_local.sh help           # Show detailed usage
+#
+# Author: Generated for zmk-sofle project
+# License: Same as ZMK (MIT)
+#
 
 set -euo pipefail
 
