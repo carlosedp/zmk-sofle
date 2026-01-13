@@ -1,10 +1,18 @@
+# Build artifacts
 build/
 artifacts/
-zmk/
+
+# ZMK
+zephyr/
+!zephyr/module.yml
+
+# West managed directories
+.west/
 modules/
 tools/
-.west/
-zephyr/
+
+# West projects from config/west.yml
+zmk/
 eyelash_sofle/
 zmk-nice-oled/
 nice-view-gem/

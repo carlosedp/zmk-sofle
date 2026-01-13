@@ -410,6 +410,10 @@ update_gitignore() {
 build/
 artifacts/
 
+# ZMK
+zephyr/
+!zephyr/module.yml
+
 # West managed directories
 .west/
 modules/
