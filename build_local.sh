@@ -131,7 +131,8 @@ build_target() {
   check_init
   check_image
 
-  local start_time=$(date +%s)
+  local start_time
+  start_time=$(date +%s)
 
   local found=0
   while IFS='|' read -r board shield snippet make_args artifact_name; do
@@ -170,7 +171,8 @@ build_target() {
 
       check_build_artifact "./build/${artifact_name}/zephyr/zmk.uf2" "${artifact_name} build"
 
-      local end_time=$(date +%s)
+      local end_time
+      end_time=$(date +%s)
       local duration=$((end_time - start_time))
       log_success "Build completed in ${duration}s"
       break
@@ -192,7 +194,8 @@ fi
 # Initialize the repo
 init() {
   log_info "Initializing repository..."
-  $COMMAND west init -l config && west update
+  $COMMAND west init -l config
+  $COMMAND west update
   log_info "Initialization complete."
 }
 
@@ -204,9 +207,46 @@ update() {
 }
 
 check_init() {
-  if [ ! -d "./zephyr" ]; then
-    log_warning "Zephyr not found. Initializing repository first..."
+  local needs_init=0
+
+  # Check if .west directory exists (indicates west init has been run)
+  if [ ! -d "./.west" ]; then
+    log_warning "West workspace not initialized (.west/ not found)"
+    needs_init=1
+  fi
+
+  # Check if zephyr directory exists
+  if [ ! -d "./zephyr/west.yml" ]; then
+    log_warning "Zephyr SDK not found (zephyr/ not found)"
+    needs_init=1
+  fi
+
+  # Check if main zmk project exists
+  if [ ! -d "./zmk" ]; then
+    log_warning "ZMK firmware not found (zmk/ not found)"
+    needs_init=1
+  fi
+
+  # If any critical directory is missing, initialize
+  if [ $needs_init -eq 1 ]; then
+    log_warning "Repository not initialized. Running initialization..."
     init
+    return 0
+  fi
+
+  # Check if all west projects from config/west.yml are present
+  local missing_projects=()
+  while IFS= read -r project_name; do
+    if [ ! -d "./${project_name}" ]; then
+      missing_projects+=("$project_name")
+    fi
+  done < <(parse_west_projects)
+
+  # If any projects are missing, run update
+  if [ ${#missing_projects[@]} -gt 0 ]; then
+    log_warning "Missing west projects: ${missing_projects[*]}"
+    log_info "Running west update to fetch missing projects..."
+    update
   fi
 }
 
@@ -239,14 +279,16 @@ build_reset() {
 
 build() {
   local failed=0
-  local start_time=$(date +%s)
+  local start_time
+  start_time=$(date +%s)
 
   # Build all targets from YAML config
   while IFS='|' read -r board shield snippet make_args artifact_name; do
     build_target "$artifact_name" || failed=$((failed + 1))
   done < <(parse_build_config)
 
-  local end_time=$(date +%s)
+  local end_time
+  end_time=$(date +%s)
   local duration=$((end_time - start_time))
 
   echo ""
