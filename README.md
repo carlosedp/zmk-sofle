@@ -28,13 +28,89 @@ If changing just the keymap or settings, flashing only one side (usually the lef
 
 ## Building Locally
 
+### Quick Start with Build Script
+
+The easiest way to build the firmware locally is using the provided build script:
+
+```sh
+# Clone the repository
+git clone https://github.com/carlosedp/zmk-sofle.git
+cd zmk-sofle
+
+# Build all firmware (auto-initializes if needed)
+./build_local.sh build
+
+# Or build specific targets
+./build_local.sh build_left
+./build_local.sh build_right
+./build_local.sh build_reset
+```
+
+The firmware files will be located at:
+- `./build/eyelash_sofle_left/zephyr/zmk.uf2`
+- `./build/eyelash_sofle_right/zephyr/zmk.uf2`
+- `./build/settings_reset/zephyr/zmk.uf2`
+
+#### Build Script Features
+
+- **Auto-Initialization**: Automatically sets up west workspace and fetches dependencies
+- **Dynamic Configuration**: Reads build targets from `build.yaml` and dependencies from `config/west.yml`
+- **Incremental Builds**: Fast rebuilds with `INCREMENTAL=true ./build_local.sh build_left`
+- **Smart Cleaning**: 
+  - `./build_local.sh clean` - Remove build artifacts only
+  - `./build_local.sh clean_all` - Remove all dependencies and build artifacts
+- **Artifact Management**: `./build_local.sh copy [destination]` - Copy all firmware files
+- **List Targets**: `./build_local.sh list` - Show all available build targets
+
+#### Build Script Commands
+
+```sh
+./build_local.sh init              # Initialize repository (west init + update)
+./build_local.sh update            # Update dependencies (west update)
+./build_local.sh list              # List all available build targets
+./build_local.sh build             # Build all firmware
+./build_local.sh build <target>    # Build specific target
+./build_local.sh clean [target]    # Clean build artifacts
+./build_local.sh clean_all         # Clean all west dependencies
+./build_local.sh gitignore         # Update .gitignore from west.yml
+./build_local.sh copy [dest]       # Copy artifacts (default: ./artifacts)
+./build_local.sh help              # Show detailed help
+```
+
+#### Environment Variables
+
+- `RUNTIME` - Container runtime (default: `podman`, can use `docker`)
+- `ZMK_IMAGE` - ZMK build image (default: `docker.io/zmkfirmware/zmk-build-arm:4.1-branch`)
+- `BUILD_CONFIG` - Build configuration file (default: `build.yaml`)
+- `INCREMENTAL` - Skip pristine builds for faster rebuilds (default: `false`)
+
+**Examples:**
+```sh
+# Use Docker instead of Podman
+RUNTIME=docker ./build_local.sh build
+
+# Faster incremental rebuild during development
+INCREMENTAL=true ./build_local.sh build_left
+
+# Copy artifacts to custom location
+./build_local.sh copy ~/Desktop/firmware
+
+# Use custom build configuration
+BUILD_CONFIG=custom.yaml ./build_local.sh build
+```
+
+### Manual Build (Advanced)
+
+For manual control over the build process:
+
 ```sh
 git clone https://github.com/carlosedp/zmk-sofle.git
-cd zmk-soufle
+cd zmk-sofle
 
 podman run -it --rm --security-opt label=disable --workdir /zmk -v $(pwd):/zmk -v /tmp:/temp docker.io/zmkfirmware/zmk-build-arm:4.1-branch /bin/bash
 
-west init -l config && west update
+west init -l config
+west update
 
 export "CMAKE_PREFIX_PATH=/zmk/zephyr:$CMAKE_PREFIX_PATH"
 
@@ -58,12 +134,7 @@ west build -d ./build/settings_reset -p \
   -b "nice_nano_v2" \
   -s /zmk/zmk/app \
   -- -DSHIELD="settings_reset" \
-  -DZMK_CONFIG="/zmk/config"3
-
-# The resulting .bin files will be located in the respective build directories:
-# ./build/left/zephyr/zmk.uf2
-# ./build/right/zephyr/zmk.uf2
-# ./build/settings_reset/zephyr/zmk.uf2
+  -DZMK_CONFIG="/zmk/config"
 ```
 
 To flash the firmware, follow the same procedure as described in the "Building and Flashing" section above, using the generated `.uf2` files.
