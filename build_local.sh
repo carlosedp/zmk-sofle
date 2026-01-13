@@ -239,7 +239,7 @@ check_init() {
   fi
 
   # Check if zephyr directory exists
-  if [ ! -d "./zephyr/west.yml" ]; then
+  if [ ! -d "./zephyr" ]; then
     log_warning "Zephyr SDK not found (zephyr/ not found)"
     needs_init=1
   fi
