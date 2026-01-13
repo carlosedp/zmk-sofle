@@ -1,4 +1,5 @@
 build/
+artifacts/
 zmk/
 modules/
 tools/
