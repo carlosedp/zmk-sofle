@@ -13,6 +13,9 @@ tools/
 
 # West projects from config/west.yml
 zmk/
-eyelash_sofle/
-zmk-nice-oled/
+zmk-sofle-dongle/
+prospector-zmk-module/
+zmk-dongle-display/
 nice-view-gem/
+zmk-dongle-screen/
+zmk-nice-oled/

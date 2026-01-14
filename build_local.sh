@@ -47,7 +47,7 @@ log_success() {
 }
 
 # Parse YAML file and extract build configurations
-# Returns: board|shield|snippet|make-args|artifact-name for each build
+# Returns: board|shield|snippet|cmake-args|artifact-name for each build
 parse_build_config() {
   if [ ! -f "$BUILD_CONFIG" ]; then
     log_error "Build configuration file not found: $BUILD_CONFIG"
@@ -57,7 +57,7 @@ parse_build_config() {
   # Simple YAML parser that extracts build configurations
   # This avoids external dependencies like yq
   local in_include=0
-  local board="" shield="" snippet="" make_args="" artifact_name=""
+  local board="" shield="" snippet="" cmake_args="" artifact_name=""
 
   while IFS= read -r line; do
     # Skip comments and empty lines
@@ -75,20 +75,20 @@ parse_build_config() {
       if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+board:[[:space:]]*(.+) ]]; then
         # Output previous config if exists
         if [ -n "$board" ]; then
-          echo "${board}|${shield}|${snippet}|${make_args}|${artifact_name}"
+          echo "${board}|${shield}|${snippet}|${cmake_args}|${artifact_name}"
         fi
         # Start new config
         board="${BASH_REMATCH[1]}"
         shield=""
         snippet=""
-        make_args=""
+        cmake_args=""
         artifact_name=""
       elif [[ "$line" =~ ^[[:space:]]+shield:[[:space:]]*(.+) ]]; then
         shield="${BASH_REMATCH[1]}"
       elif [[ "$line" =~ ^[[:space:]]+snippet:[[:space:]]*(.+) ]]; then
         snippet="${BASH_REMATCH[1]}"
-      elif [[ "$line" =~ ^[[:space:]]+make-args:[[:space:]]*(.+) ]]; then
-        make_args="${BASH_REMATCH[1]}"
+      elif [[ "$line" =~ ^[[:space:]]+cmake-args:[[:space:]]*(.+) ]]; then
+        cmake_args="${BASH_REMATCH[1]}"
       elif [[ "$line" =~ ^[[:space:]]+artifact-name:[[:space:]]*(.+) ]]; then
         artifact_name="${BASH_REMATCH[1]}"
       fi
@@ -97,7 +97,7 @@ parse_build_config() {
 
   # Output last config
   if [ -n "$board" ]; then
-    echo "${board}|${shield}|${snippet}|${make_args}|${artifact_name}"
+    echo "${board}|${shield}|${snippet}|${cmake_args}|${artifact_name}"
   fi
 }
 
@@ -158,7 +158,7 @@ build_target() {
   start_time=$(date +%s)
 
   local found=0
-  while IFS='|' read -r board shield snippet make_args artifact_name; do
+  while IFS='|' read -r board shield snippet cmake_args artifact_name; do
     if [ "$artifact_name" = "$target_name" ]; then
       found=1
       log_info "Building ${artifact_name} firmware..."
@@ -180,17 +180,20 @@ build_target() {
         build_args+=("-S" "$snippet")
       fi
 
-      # Add shield and make-args to cmake arguments
-      local cmake_args="-DZMK_CONFIG=/zmk/config"
+      # Add shield and cmake-args to cmake arguments
+      local cmake_args_array=()
+      cmake_args_array+=("-DZMK_CONFIG=/zmk/config")
       if [ -n "$shield" ]; then
-        cmake_args="$cmake_args -DSHIELD=$shield"
+        cmake_args_array+=("-DSHIELD=$shield")
       fi
-      if [ -n "$make_args" ]; then
-        cmake_args="$cmake_args $make_args"
+      if [ -n "$cmake_args" ]; then
+        # Split cmake_args by spaces and add to array
+        read -ra extra_args <<<"$cmake_args"
+        cmake_args_array+=("${extra_args[@]}")
       fi
 
       # Execute build
-      $COMMAND west build "${build_args[@]}" -- $cmake_args
+      $COMMAND west build "${build_args[@]}" -- "${cmake_args_array[@]}"
 
       check_build_artifact "./build/${artifact_name}/zephyr/zmk.uf2" "${artifact_name} build"
 
@@ -288,12 +291,20 @@ check_build_artifact() {
 }
 
 # Build the firmware
+build_dongle() {
+  build_target "eyelash_sofle_central_dongle_oled"
+}
+
 build_left() {
-  build_target "eyelash_sofle_left"
+  build_target "eyelash_sofle_peripheral_left"
+}
+
+build_central_left() {
+  build_target "eyelash_sofle_central_left"
 }
 
 build_right() {
-  build_target "eyelash_sofle_right"
+  build_target "eyelash_sofle_peripheral_right"
 }
 
 build_reset() {
@@ -306,7 +317,7 @@ build() {
   start_time=$(date +%s)
 
   # Build all targets from YAML config
-  while IFS='|' read -r board shield snippet make_args artifact_name; do
+  while IFS='|' read -r board shield snippet cmake_args artifact_name; do
     build_target "$artifact_name" || failed=$((failed + 1))
   done < <(parse_build_config)
 
@@ -331,12 +342,12 @@ build() {
 list_targets() {
   log_info "Available build targets from $BUILD_CONFIG:"
   echo ""
-  while IFS='|' read -r board shield snippet make_args artifact_name; do
+  while IFS='|' read -r board shield snippet cmake_args artifact_name; do
     echo "  - $artifact_name"
     echo "      board: $board"
     [ -n "$shield" ] && echo "      shield: $shield"
     [ -n "$snippet" ] && echo "      snippet: $snippet"
-    [ -n "$make_args" ] && echo "      make-args: $make_args"
+    [ -n "$cmake_args" ] && echo "      cmake-args: $cmake_args"
     echo ""
   done < <(parse_build_config)
 }
@@ -439,7 +450,7 @@ copy_artifacts() {
   local copied=0
 
   # Copy all artifacts from YAML config
-  while IFS='|' read -r board shield snippet make_args artifact_name; do
+  while IFS='|' read -r board shield snippet cmake_args artifact_name; do
     local src_file="./build/${artifact_name}/zephyr/zmk.uf2"
     local dst_file="$DEST/${artifact_name}.uf2"
 
@@ -467,16 +478,15 @@ The script allows you to build ZMK firmware targets defined in a YAML configurat
 
 Usage: $0 [flags] <command>
 
-Flags:
-  -i, --incremental    Enable incremental builds (skip pristine build, faster)
-
 Commands:
   init             Initialize the repository (west init + update)
   update           Update the repository (west update)
   list             List all available build targets from build.yaml
-  build_left       Build left side firmware only
-  build_right      Build right side firmware only
-  build_reset      Build settings reset firmware only
+  build_dongle     Build central dongle firmware
+  build_left       Build peripheral left firmware
+  build_right      Build peripheral right firmware
+  build_central_left Build central left (no dongle) firmware
+  build_reset      Build settings reset firmware
   build [name]     Build all firmware or specific target by name
   clean [target]   Clean build directory (all or specific target)
   clean_all        Clean all west dependencies and build artifacts
@@ -491,19 +501,19 @@ Environment Variables:
   INCREMENTAL   Skip pristine builds for faster rebuilds (default: false)
 
 Examples:
-  $0 build                           # Build all firmware from build.yaml
-  $0 -i build_left                   # Fast incremental build of left side
-  $0 --incremental build             # Incremental build of all targets
-  $0 build eyelash_sofle_left        # Build specific target
-  $0 list                            # List all available targets
-  $0 build_left                      # Build only left side
-  $0 clean                           # Clean build artifacts
-  $0 clean eyelash_sofle_left        # Clean specific target
+  $0 build                                      # Build all firmware from build.yaml
+  $0 build eyelash_sofle_peripheral_left        # Build specific target
+  $0 list                                       # List all available targets
+  $0 build_dongle                               # Build central dongle
+  $0 build_left                                 # Build peripheral left
+  $0 build_central_left                         # Build central left (no dongle)
+  $0 clean                                      # Clean build artifacts
+  $0 clean eyelash_sofle_peripheral_left        # Clean specific target
   $0 clean_all                       # Clean all west dependencies
   $0 gitignore                       # Update .gitignore from west.yml
   $0 copy                            # Copy artifacts to ./artifacts
   $0 copy /path/to/dir               # Copy artifacts to custom directory
-  INCREMENTAL=true $0 build_left     # Alternative way to enable incremental
+  INCREMENTAL=true $0 build_left     # Faster incremental build
   BUILD_CONFIG=custom.yaml $0 build  # Use custom build config
   RUNTIME=docker $0 build            # Use docker instead of podman
 
@@ -542,14 +552,6 @@ fi
 # Restore positional parameters
 set -- "${ARGS[@]}"
 
-# Check if we still have a command after parsing flags
-if [ $# -eq 0 ]; then
-  log_error "Error: No command provided"
-  echo ""
-  show_help
-  exit 1
-fi
-
 case "$1" in
 init)
   init
@@ -560,11 +562,17 @@ update)
 list)
   list_targets
   ;;
+build_dongle)
+  build_dongle
+  ;;
 build_left)
   build_left
   ;;
 build_right)
   build_right
+  ;;
+build_central_left)
+  build_central_left
   ;;
 build_reset)
   build_reset

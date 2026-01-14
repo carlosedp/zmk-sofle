@@ -2,23 +2,42 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: mctechnology17
-      url-base: https://github.com/mctechnology17
+    - name: gpeye
+      url-base: https://github.com/GPeye
+    - name: tokyo2006
+      url-base: https://github.com/tokyo2006
+    - name: englmaxi
+      url-base: https://github.com/englmaxi
+    - name: carlosedp
+      url-base: https://github.com/carlosedp
     - name: M165437
       url-base: https://github.com/M165437
+    - name: janpfischer
+      url-base: https://github.com/janpfischer
+    - name: mctechnology17
+      url-base: https://github.com/mctechnology17
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: v0.3
       import: app/west.yml
-    - name: eyelash_sofle
-      url: https://github.com/carlosedp/zmk-sofle
+    - name: zmk-sofle-dongle
+      remote: carlosedp
+      revision: main
+    - name: prospector-zmk-module
+      remote: tokyo2006
+      revision: micro_spi2
+    - name: zmk-dongle-display
+      remote: englmaxi
+      revision: v0.3
+    - name: nice-view-gem
+      remote: M165437
+      revision: main
+    - name: zmk-dongle-screen
+      remote: janpfischer
       revision: main
     - name: zmk-nice-oled
       remote: mctechnology17
       revision: main
-    - name: nice-view-gem
-      remote: M165437
-      revision: main
   self:
-    path: boards
+    path: config

@@ -1,9 +1,9 @@
 file_format: "1"
 id: eyelash_sofle
 name: Eyelash Sofle
-url: https://github.com/carlosedp/zmk-sofle
-type: board
-arch: arm
+url: https://github.com/carlosedp/zmk-sofle-dongle
+type: shield
+requires: [pro_micro]
 features:
   - keys
   - display
