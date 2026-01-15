@@ -29,7 +29,12 @@ set -euo pipefail
 RUNTIME="${RUNTIME:-podman}" # Could be docker or podman
 IMG="${ZMK_IMAGE:-docker.io/zmkfirmware/zmk-build-arm:4.1-branch}"
 ENV="-e CMAKE_PREFIX_PATH=/zmk/zephyr:${CMAKE_PREFIX_PATH:-}"
-COMMAND="$RUNTIME run -it --rm --workdir /zmk -v $(pwd):/zmk -v /tmp:/temp $ENV $IMG"
+INTERACTIVE="-it"
+if [ "$RUNTIME" == "docker" ]
+then
+  INTERACTIVE=""
+fi
+COMMAND="$RUNTIME run $INTERACTIVE --rm --workdir /zmk -v $(pwd):/zmk -v /tmp:/temp $ENV $IMG"
 BUILD_CONFIG="${BUILD_CONFIG:-build.yaml}"
 INCREMENTAL="${INCREMENTAL:-false}" # Set to true to skip -p (pristine) flag for faster incremental builds
 
