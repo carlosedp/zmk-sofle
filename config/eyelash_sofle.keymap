@@ -38,19 +38,20 @@
     };
 
     behaviors {
-        td0: tap_dance_0 {
+        layer1mt: momentary_or_toggle_layer1 {
             // If held, momentary switch to layer 1 or double tap to toggle layer 1
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&mo 1>, <&tog 1>;
+            bindings = <&mo 1>, <&to 1>;
         };
-        td1: tap_dance_1 {
-            // If held, momentary switch to layer 2 or double tap to toggle layer 2
+
+        layer3mt: momentary_or_toggle_layer3 {
+            // If held, momentary switch to layer 3 or double tap to toggle layer 3
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&mo 2>, <&tog 2>;
+            bindings = <&mo 3>, <&to 3>;
         };
     };
 
@@ -64,7 +65,7 @@
     };
 
     macros {
-        snapshot_win: snapshot_win {
+        snap_win: snapshot_win {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings =
@@ -78,7 +79,7 @@
             label = "SNAPSHOT_WIN";
         };
 
-        snapshot_mac_clip: snapshot_mac_clip {
+        snap_mac_clip: snapshot_mac_clip {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings =
@@ -92,7 +93,7 @@
             label = "SNAPSHOT_MAC_CLIP";
         };
 
-        snapshot_mac_file: snapshot_mac_file {
+        snap_mac_file: snapshot_mac_file {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings =
@@ -112,70 +113,75 @@
 
     keymap {
         compatible = "zmk,keymap";
-
-        layer0 {
+//
+// Windows layout
+//
+        layer_0 {
             bindings = <
-&kp ESC     &kp N1     &kp N2        &kp N3        &kp N4  &kp N5           &kp UP_ARROW         &kp N6     &kp N7     &kp N8     &kp N9           &kp N0      &kp BACKSPACE
-&kp TAB     &kp Q      &kp W         &kp E         &kp R   &kp T            &kp DOWN_ARROW       &kp Y      &kp U      &kp I      &kp O            &kp P       &kp BSLH
-&kp GRAVE   &kp A      &kp S         &kp D         &kp F   &kp G            &kp LEFT_ARROW       &kp H      &kp J      &kp K      &kp L            &kp SEMI    &kp APOS
-&kp LSHFT   &kp Z      &kp X         &kp C         &kp V   &kp B            &kp RIGHT_ARROW      &kp N      &kp M      &kp COMMA  &kp DOT          &kp FSLH    &kp RIGHT_SHIFT
-&kp C_MUTE  &kp LCTRL  &kp LEFT_GUI  &kp LEFT_ALT  &td0    &kp SPACE        &kp ENTER            &kp SPACE  &kp ENTER  &td1       &kp RIGHT_ALT    &snapshot_win
+&kp ESC     &kp N1          &kp N2           &kp N3          &kp N4            &kp N5                  &kp UP_ARROW                &kp N6          &kp N7         &kp N8         &kp N9        &kp N0             &kp BACKSPACE
+&kp TAB     &kp Q           &kp W            &kp E           &kp R             &kp T                   &kp DOWN_ARROW              &kp Y           &kp U          &kp I          &kp O         &kp P              &kp BSLH
+&kp GRAVE   &kp A           &kp S            &kp D           &kp F             &kp G                   &kp LEFT_ARROW              &kp H           &kp J          &kp K          &kp L         &kp SEMI           &kp APOS
+&kp LSHFT   &kp Z           &kp X            &kp C           &kp V             &kp B                   &kp RIGHT_ARROW             &kp N           &kp M          &kp COMMA      &kp DOT       &kp FSLH           &kp RIGHT_SHIFT
+&kp C_MUTE                  &kp LCTRL        &kp LEFT_GUI    &kp LEFT_ALT      &layer1mt   &kp SPACE   &kp ENTER       &kp SPACE   &kp ENTER       &mo 4          &kp RIGHT_ALT  &snap_win
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOL_DN>;
-            display-name = "LAYER0";
+            display-name = "Windows";
         };
 
         layer_1 {
             bindings = <
-&kp GRAVE   &kp F1           &kp F2          &kp F3           &kp F4           &kp F5             &mmv MOVE_UP     &kp F6           &kp F7           &kp F8      &kp F9         &kp F10           &trans
-&trans      &none            &kp UP          &mkp LCLK        &mkp MCLK        &mkp RCLK          &mmv MOVE_DOWN   &kp PG_UP        &kp LC(LEFT)     &kp UP      &kp LC(RIGHT)  &kp MINUS         &kp EQUAL
-&trans      &kp LEFT         &kp DOWN        &kp RIGHT        &none            &mkp MB5           &mmv MOVE_LEFT   &kp PG_DN        &kp LEFT         &kp DOWN    &kp RIGHT      &kp LEFT_BRACKET  &kp RIGHT_BRACKET
-&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI    &mmv MOVE_RIGHT  &rgb_ug RGB_BRI  &kp HOME         &kp END     &kp C_VOL_DN   &kp C_VOL_UP      &trans
-&kp C_MUTE  &trans           &trans          &trans           &trans           &trans             &mkp LCLK        &trans           &trans           &trans      &trans         &snapshot_mac_clip
+&to 2       &kp F1           &kp F2          &kp F3           &kp F4           &kp F5                   &mmv MOVE_UP               &kp F6           &kp F7        &kp F8         &kp F9         &kp F10           &trans
+&trans      &none            &kp UP          &mkp LCLK        &mkp MCLK        &mkp RCLK                &mmv MOVE_DOWN             &kp PG_UP        &kp LC(LEFT)  &kp UP         &kp LC(RIGHT)  &kp MINUS         &kp EQUAL
+&trans      &kp LEFT         &kp DOWN        &kp RIGHT        &none            &mkp MB5                 &mmv MOVE_LEFT             &kp PG_DN        &kp LEFT      &kp DOWN       &kp RIGHT      &kp LEFT_BRACKET  &kp RIGHT_BRACKET
+&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI          &mmv MOVE_RIGHT            &rgb_ug RGB_BRI  &kp HOME      &kp END        &kp C_VOL_DN   &kp C_VOL_UP      &trans
+&kp C_MUTE                   &trans          &trans           &trans           &trans          &trans   &mkp LCLK        &trans    &trans           &trans        &trans         &trans
             >;
 
-            display-name = "layer1";
+            display-name = "Win Fn";
             sensor-bindings = <&scroll_encoder>;
         };
-
+//
+// Mac layout
+//
         layer_2 {
             bindings = <
-&studio_unlock  &bt BT_SEL 0  &bt BT_SEL 1    &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &kp C_VOL_UP        &trans  &trans   &trans      &kp F11    &kp F12      &kp BACKSPACE
-&trans          &bt BT_CLR    &bt BT_CLR_ALL  &trans        &trans        &trans          &kp C_VOL_DN        &trans  &trans   &kp PG_UP   &trans     &kp UNDER    &kp PLUS
-&trans          &out OUT_USB  &out OUT_BLE    &trans        &trans        &trans          &trans              &trans  &kp HOME &kp PG_DN   &kp END    &kp LBRC     &kp RBRC
-&trans          &sys_reset    &trans          &bootloader   &trans        &trans          &trans              &trans  &trans   &sys_reset  &soft_off  &bootloader  &trans
-&trans          &trans        &trans          &trans        &trans        &trans          &kp C_MUTE          &trans  &trans   &trans      &trans     &snapshot_mac_file
+&kp ESC     &kp N1          &kp N2          &kp N3           &kp N4            &kp N5                   &kp UP_ARROW               &kp N6          &kp N7         &kp N8         &kp N9           &kp N0            &kp BACKSPACE
+&kp TAB     &kp Q           &kp W           &kp E            &kp R             &kp T                    &kp DOWN_ARROW             &kp Y           &kp U          &kp I          &kp O            &kp P             &kp BSLH
+&kp GRAVE   &kp A           &kp S           &kp D            &kp F             &kp G                    &kp LEFT_ARROW             &kp H           &kp J          &kp K          &kp L            &kp SEMI          &kp APOS
+&kp LSHFT   &kp Z           &kp X           &kp C            &kp V             &kp B                    &kp RIGHT_ARROW            &kp N           &kp M          &kp COMMA      &kp DOT          &kp FSLH          &kp RIGHT_SHIFT
+&kp C_MUTE                  &kp LCTRL       &kp LEFT_ALT     &kp LEFT_GUI      &layer3mt   &kp SPACE    &kp ENTER       &kp SPACE  &kp ENTER       &mo 4          &kp RIGHT_ALT  &snap_mac_clip
             >;
 
-            display-name = "layer2";
-            sensor-bindings = <&scroll_encoder>;
+            sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOL_DN>;
+            display-name = "Mac";
         };
 
         layer_3 {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
+&to 0       &kp F1           &kp F2          &kp F3           &kp F4           &kp F5                   &mmv MOVE_UP               &kp F6           &kp F7        &kp F8         &kp F9           &kp F10           &trans
+&trans      &none            &kp UP          &mkp LCLK        &mkp MCLK        &mkp RCLK                &mmv MOVE_DOWN             &kp PG_UP        &kp LC(LEFT)  &kp UP         &kp LC(RIGHT)    &kp MINUS         &kp EQUAL
+&trans      &kp LEFT         &kp DOWN        &kp RIGHT        &none            &mkp MB5                 &mmv MOVE_LEFT             &kp PG_DN        &kp LEFT      &kp DOWN       &kp RIGHT        &kp LEFT_BRACKET  &kp RIGHT_BRACKET
+&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI          &mmv MOVE_RIGHT            &rgb_ug RGB_BRI  &kp HOME      &kp END        &kp C_VOL_DN     &kp C_VOL_UP      &trans
+&kp C_MUTE                   &trans          &trans           &trans           &trans          &trans   &mkp LCLK        &trans    &trans           &trans        &trans         &snap_mac_file
             >;
 
-            display-name = "layer3";
+            display-name = "Mac Fn";
             sensor-bindings = <&scroll_encoder>;
         };
 
         layer_4 {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
+&studio_unlock  &bt BT_SEL 0  &bt BT_SEL 1    &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4          &kp C_VOL_UP         &trans   &trans      &trans      &kp F11    &kp F12      &kp BACKSPACE
+&trans          &bt BT_CLR    &bt BT_CLR_ALL  &trans        &trans        &trans                &kp C_VOL_DN         &trans   &trans      &kp PG_UP   &trans     &kp UNDER    &kp PLUS
+&trans          &out OUT_USB  &out OUT_BLE    &trans        &trans        &trans                &trans               &trans   &kp HOME    &kp PG_DN   &kp END    &kp LBRC     &kp RBRC
+&trans          &sys_reset    &trans          &bootloader   &trans        &trans                &trans               &trans   &trans      &sys_reset  &soft_off  &bootloader  &trans
+&trans                        &trans          &trans        &trans        &trans      &trans    &kp C_MUTE   &trans  &trans   &trans      &trans      &trans
             >;
 
-            display-name = "layer4";
+            display-name = "Utils";
             sensor-bindings = <&scroll_encoder>;
         };
+
     };
 };
