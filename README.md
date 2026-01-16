@@ -47,6 +47,7 @@ cd zmk-sofle
 ```
 
 The firmware files will be located at:
+
 - `./build/eyelash_sofle_left/zephyr/zmk.uf2`
 - `./build/eyelash_sofle_right/zephyr/zmk.uf2`
 - `./build/settings_reset/zephyr/zmk.uf2`
@@ -56,7 +57,7 @@ The firmware files will be located at:
 - **Auto-Initialization**: Automatically sets up west workspace and fetches dependencies
 - **Dynamic Configuration**: Reads build targets from `build.yaml` and dependencies from `config/west.yml`
 - **Incremental Builds**: Fast rebuilds with `INCREMENTAL=true ./build_local.sh build_left`
-- **Smart Cleaning**: 
+- **Smart Cleaning**:
   - `./build_local.sh clean` - Remove build artifacts only
   - `./build_local.sh clean_all` - Remove all dependencies and build artifacts
 - **Artifact Management**: `./build_local.sh copy [destination]` - Copy all firmware files
@@ -85,6 +86,7 @@ The firmware files will be located at:
 - `INCREMENTAL` - Skip pristine builds for faster rebuilds (default: `false`)
 
 **Examples:**
+
 ```sh
 # Use Docker instead of Podman
 RUNTIME=docker ./build_local.sh build
