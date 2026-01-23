@@ -4,26 +4,26 @@ include:
     shield: eyelash_sofle_central_dongle dongle_display
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-    artifact-name: eyelash_sofle_central_dongle_oled
+    artifact-name: eyelash_sofle_dongle_central_dongle_oled
   - board: nice_nano_v2
     shield: eyelash_sofle_peripheral_left nice_view_gem
-    artifact-name: eyelash_sofle_peripheral_left
+    artifact-name: eyelash_sofle_dongle_peripheral_left
   - board: nice_nano_v2
     shield: eyelash_sofle_peripheral_right nice_view_gem
-    artifact-name: eyelash_sofle_peripheral_right
+    artifact-name: eyelash_sofle_dongle_peripheral_right
   - board: nice_nano_v2
     shield: settings_reset
-    artifact-name: settings_reset
+    artifact-name: eyelash_sofle_settings_reset
 
   # For the keyboard without the central dongle
   - board: nice_nano_v2
     shield: eyelash_sofle_central_left nice_view_gem
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-    artifact-name: eyelash_sofle_central_left_standalone
+    artifact-name: eyelash_sofle_standalone_central_left
   - board: nice_nano_v2
     shield: eyelash_sofle_peripheral_right nice_view_gem
-    artifact-name: eyelash_sofle_peripheral_right_standalone
+    artifact-name: eyelash_sofle_standalone_peripheral_right
   - board: nice_nano_v2
     shield: settings_reset
-    artifact-name: settings_reset_standalone
+    artifact-name: eyelash_sofle_standalone_settings_reset
