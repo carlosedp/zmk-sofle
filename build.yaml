@@ -4,16 +4,16 @@ include:
     shield: eyelash_sofle_central_dongle dongle_display
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-    artifact-name: eyelash_sofle_dongle_central_dongle_oled
+    artifact-name: eyelash_sofle_dongle_central_dongle
   - board: nice_nano_v2
-    shield: eyelash_sofle_peripheral_left nice_view_gem
+    shield: eyelash_sofle_peripheral_left nice_view
     artifact-name: eyelash_sofle_dongle_peripheral_left
   - board: nice_nano_v2
-    shield: eyelash_sofle_peripheral_right nice_view_gem
+    shield: eyelash_sofle_peripheral_right nice_view
     artifact-name: eyelash_sofle_dongle_peripheral_right
   - board: nice_nano_v2
     shield: settings_reset
-    artifact-name: eyelash_sofle_settings_reset
+    artifact-name: eyelash_sofle_dongle_settings_reset
 
   # For the keyboard without the central dongle
   - board: nice_nano_v2

@@ -32,7 +32,7 @@ manifest:
       revision: v0.3
     - name: nice-view-gem
       remote: M165437
-      revision: main
+      revision: v0.3.0
     - name: zmk-dongle-screen
       remote: janpfischer
       revision: main
