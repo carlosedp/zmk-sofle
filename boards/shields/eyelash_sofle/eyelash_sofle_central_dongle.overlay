@@ -34,8 +34,8 @@
                 <NRF_PSEL(TWIM_SCL, 0, 20)>;
             low-power-enable;
         };
-    };	
-}; 
+    };
+};
 
 &i2c0 {
 	status = "okay";
@@ -55,5 +55,9 @@
         com-invdir;
         inversion-on;
         prechargep = <0x22>;
+        //Comment out to draw in reverse (upside down)
+        // segment-remap;
+        //Comment out to flip horizontally
+        // com-invdir;
 	};
 };
