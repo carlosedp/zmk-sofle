@@ -127,11 +127,11 @@
 //
         layer_0 {
             bindings = <
-&kp ESC     &kp N1          &kp N2           &kp N3          &kp N4            &kp N5                    &kp UP_ARROW                &kp N6          &kp N7         &kp N8         &kp N9        &kp N0             &kp BACKSPACE
-&kp TAB     &kp Q           &kp W            &kp E           &kp R             &kp T                     &kp DOWN_ARROW              &kp Y           &kp U          &kp I          &kp O         &kp P              &kp BSLH
-&kp GRAVE   &kp A           &kp S            &kp D           &kp F             &kp G                     &kp LEFT_ARROW              &kp H           &kp J          &kp K          &kp L         &kp SEMI           &kp APOS
-&kp LSHFT   &kp Z           &kp X            &kp C           &kp V             &kp B                     &kp RIGHT_ARROW             &kp N           &kp M          &kp COMMA      &kp DOT       &kp FSLH           &kp RIGHT_SHIFT
-&kp C_MUTE                  &kp LCTRL        &kp LEFT_GUI    &kp LEFT_ALT      &winfn_mt  &kp BACKSPACE  &kp ENTER       &kp SPACE   &kp ENTER       &mo UTILS          &kp RIGHT_ALT  &snap_win
+&kp ESC     &kp N1        &kp N2       &kp N3        &kp N4         &kp N5               &kp UP                 &kp N6     &kp N7         &kp N8         &kp N9        &kp N0          &kp BSPC
+&kp TAB     &kp Q         &kp W        &kp E         &kp R          &kp T                &kp DOWN               &kp Y      &kp U          &kp I          &kp O         &kp P           &kp BSLH
+&kp GRAVE   &kp A         &kp S        &kp D         &kp F          &kp G                &kp LEFT               &kp H      &kp J          &kp K          &kp L         &kp SEMI        &kp APOS
+&kp LSHFT   &kp Z         &kp X        &kp C         &kp V          &kp B                &kp RIGHT              &kp N      &kp M          &kp COMMA      &kp DOT       &kp FSLH        &kp RSHIFT
+&kp C_MUTE                &kp LCTRL    &kp LGUI      &kp LALT       &winfn_mt  &kp BSPC  &kp ENTER  &kp SPACE   &kp ENTER  &mo UTILS      &kp RIGHT_ALT  &snap_win
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOL_DN>;
@@ -140,10 +140,10 @@
 
         layer_1 {
             bindings = <
-&to MAC     &kp F1           &kp F2          &kp F3           &kp F4           &kp F5                   &mmv MOVE_UP               &kp F6           &kp F7        &kp F8         &kp F9         &kp F10           &trans
-&trans      &none            &kp UP          &mkp LCLK        &mkp MCLK        &mkp RCLK                &mmv MOVE_DOWN             &kp PG_UP        &kp LC(LEFT)  &kp UP         &kp LC(RIGHT)  &kp MINUS         &kp EQUAL
-&trans      &kp LEFT         &kp DOWN        &kp RIGHT        &none            &mkp MB5                 &mmv MOVE_LEFT             &kp PG_DN        &kp LEFT      &kp DOWN       &kp RIGHT      &kp LEFT_BRACKET  &kp RIGHT_BRACKET
-&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI          &mmv MOVE_RIGHT            &rgb_ug RGB_BRI  &kp HOME      &kp END        &kp C_VOL_DN   &kp C_VOL_UP      &trans
+&to MAC     &kp F1           &kp F2          &kp F3           &kp F4           &kp F5                   &mmv MOVE_UP               &kp F6           &kp F7        &kp F8         &kp F9         &kp F10       &trans
+&trans      &none            &kp UP          &mkp LCLK        &mkp MCLK        &mkp RCLK                &mmv MOVE_DOWN             &kp PG_UP        &kp LC(LEFT)  &kp UP         &kp LC(RIGHT)  &kp MINUS     &kp EQUAL
+&trans      &kp LEFT         &kp DOWN        &kp RIGHT        &none            &mkp MB5                 &mmv MOVE_LEFT             &kp PG_DN        &kp LEFT      &kp DOWN       &kp RIGHT      &kp LBKT      &kp RBKT
+&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI          &mmv MOVE_RIGHT            &rgb_ug RGB_BRI  &kp HOME      &kp END        &kp C_VOL_DN   &kp C_VOL_UP  &trans
 &kp C_MUTE                   &trans          &trans           &trans           &trans          &trans   &mkp LCLK        &trans    &trans           &trans        &trans         &trans
             >;
 
