@@ -19,7 +19,6 @@
 #   ./build_local.sh build          # Initialize (if needed) and build all firmware
 #   ./build_local.sh help           # Show detailed usage
 #
-# Author: Generated for zmk-sofle project
 # License: Same as ZMK (MIT)
 #
 
@@ -47,18 +46,16 @@ log_success() {
 }
 
 # Get the name of the keyboard from the parent directory if possible
+# This is used for informational purposes and can be overridden with KEYBOARD env var
 THIS_SCRIPT=$(readlink -f $0)
 SCRIPT_DIR=$(dirname $THIS_SCRIPT)
 SCRIPT_DIR_NAME=$(basename $SCRIPT_DIR)
 case $SCRIPT_DIR_NAME in
-zmk-sofle) KEYBOARD="eyelash_sofle" ;; # For backwards compatibility
 zmk-config-*) KEYBOARD=${SCRIPT_DIR_NAME#zmk-config-} ;;
 zmk-*) KEYBOARD=${SCRIPT_DIR_NAME#zmk-} ;;
 *)
-  if [ -z "${KEYBOARD:+set}" ]; then
-    log_error "KEYBOARD not set and cannot be found from directory name: $SCRIPT_DIR_NAME"
-    exit 1
-  fi
+  # Use directory name as-is if KEYBOARD not already set
+  KEYBOARD="${KEYBOARD:-$SCRIPT_DIR_NAME}"
   ;;
 esac
 
@@ -199,6 +196,7 @@ build_target() {
       # Add shield and cmake-args to cmake arguments
       local cmake_args_array=()
       cmake_args_array+=("-DZMK_CONFIG=/zmk/config")
+      cmake_args_array+=("-DBOARD_ROOT=/zmk")
       if [ -n "$shield" ]; then
         cmake_args_array+=("-DSHIELD=$shield")
       fi
@@ -304,27 +302,6 @@ check_build_artifact() {
     log_error "✗ $build_name failed: Artifact not found at $artifact_path"
     return 1
   fi
-}
-
-# Build the firmware
-build_dongle() {
-  build_target "${KEYBOARD}_central_dongle_oled"
-}
-
-build_left() {
-  build_target "${KEYBOARD}_peripheral_left"
-}
-
-build_central_left() {
-  build_target "${KEYBOARD}_central_left"
-}
-
-build_right() {
-  build_target "${KEYBOARD}_peripheral_right"
-}
-
-build_reset() {
-  build_target "settings_reset"
 }
 
 build() {
@@ -498,11 +475,6 @@ Commands:
   init             Initialize the repository (west init + update)
   update           Update the repository (west update)
   list             List all available build targets from build.yaml
-  build_dongle     Build central dongle firmware
-  build_left       Build peripheral left firmware
-  build_right      Build peripheral right firmware
-  build_central_left Build central left (no dongle) firmware
-  build_reset      Build settings reset firmware
   build [name]     Build all firmware or specific target by name
   clean [target]   Clean build directory (all or specific target)
   clean_all        Clean all west dependencies and build artifacts
@@ -512,28 +484,24 @@ Commands:
 
 Environment Variables:
   KEYBOARD        Name of the keyboard being built (default: extracted from directory name)
-  RUNTIME       Container runtime (default: podman, can be docker)
-  ZMK_IMAGE     ZMK build image (default: docker.io/zmkfirmware/zmk-build-arm:4.1-branch)
-  BUILD_CONFIG  Build configuration file (default: build.yaml)
-  INCREMENTAL   Skip pristine builds for faster rebuilds (default: false)
+  RUNTIME         Container runtime (default: podman, can be docker)
+  ZMK_IMAGE       ZMK build image (default: docker.io/zmkfirmware/zmk-build-arm:4.1-branch)
+  BUILD_CONFIG    Build configuration file (default: build.yaml)
+  INCREMENTAL     Skip pristine builds for faster rebuilds (default: false)
 
 Examples:
-  $0 build                                      # Build all firmware from build.yaml
-  $0 build ${KEYBOARD}_peripheral_left          # Build specific target
   $0 list                                       # List all available targets
-  $0 build_dongle                               # Build central dongle
-  $0 build_left                                 # Build peripheral left
-  $0 build_central_left                         # Build central left (no dongle)
+  $0 build                                      # Build all firmware from build.yaml
+  $0 build my_keyboard_left                     # Build specific target
   $0 clean                                      # Clean build artifacts
-  $0 clean ${KEYBOARD}_peripheral_left          # Clean specific target
-  $0 clean_all                       # Clean all west dependencies
-  $0 gitignore                       # Update .gitignore from west.yml
-  $0 copy                            # Copy artifacts to ./artifacts
-  $0 copy /path/to/dir               # Copy artifacts to custom directory
-  KEYBOARD=name $0 build             # Set the keyboard name manually
-  INCREMENTAL=true $0 build_left     # Faster incremental build
-  BUILD_CONFIG=custom.yaml $0 build  # Use custom build config
-  RUNTIME=docker $0 build            # Use docker instead of podman
+  $0 clean my_keyboard_left                     # Clean specific target
+  $0 clean_all                                  # Clean all west dependencies
+  $0 gitignore                                  # Update .gitignore from west.yml
+  $0 copy                                       # Copy artifacts to ./artifacts
+  $0 copy /path/to/dir                          # Copy artifacts to custom directory
+  INCREMENTAL=true $0 build my_keyboard_left    # Faster incremental build
+  BUILD_CONFIG=custom.yaml $0 build             # Use custom build config
+  RUNTIME=docker $0 build                       # Use docker instead of podman
 
 EOF
 }
@@ -579,21 +547,6 @@ update)
   ;;
 list)
   list_targets
-  ;;
-build_dongle)
-  build_dongle
-  ;;
-build_left)
-  build_left
-  ;;
-build_right)
-  build_right
-  ;;
-build_central_left)
-  build_central_left
-  ;;
-build_reset)
-  build_reset
   ;;
 build)
   # If second argument provided, build specific target
