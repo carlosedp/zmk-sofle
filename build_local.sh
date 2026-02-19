@@ -88,7 +88,12 @@ parse_build_config() {
       if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+board:[[:space:]]*(.+) ]]; then
         # Output previous config if exists
         if [ -n "$board" ]; then
-          echo "${board}|${shield}|${snippet}|${cmake_args}|${artifact_name}"
+          local out_name="${artifact_name}"
+          if [ -z "$out_name" ]; then
+            out_name="${board}"
+            [ -n "$shield" ] && out_name="${board}_${shield}"
+          fi
+          echo "${board}|${shield}|${snippet}|${cmake_args}|${out_name}"
         fi
         # Start new config
         board="${BASH_REMATCH[1]}"
@@ -110,7 +115,12 @@ parse_build_config() {
 
   # Output last config
   if [ -n "$board" ]; then
-    echo "${board}|${shield}|${snippet}|${cmake_args}|${artifact_name}"
+    local out_name="${artifact_name}"
+    if [ -z "$out_name" ]; then
+      out_name="${board}"
+      [ -n "$shield" ] && out_name="${board}_${shield}"
+    fi
+    echo "${board}|${shield}|${snippet}|${cmake_args}|${out_name}"
   fi
 }
 
