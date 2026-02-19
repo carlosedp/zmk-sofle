@@ -101,6 +101,23 @@ INCREMENTAL=true ./build_local.sh build_left
 BUILD_CONFIG=custom.yaml ./build_local.sh build
 ```
 
+### Pairing with the Dongle
+
+When using the central dongle, the battery widget assigns the battery indicators from left to right, based on the sequence in which the keyboard halves are paired to the dongle.
+
+For split keyboards, it is essential to pair the left half first after flashing the dongle, followed by the right half. This ensures the correct mapping of battery status indicators and avoids swapped displays in the widget.
+
+The recommended procedure is as follows:
+
+1. Switch off both keyboard halves.
+2. Flash the dongle
+3. Disconnect the dongle
+4. Flash the left half
+5. Flash the right half
+6. Reconnect the dongle
+7. Switch on the left half and wait until the battery indicator appears on dongle
+8. Switch on the right half
+
 ### Manual Build (Advanced)
 
 For manual control over the build process:
