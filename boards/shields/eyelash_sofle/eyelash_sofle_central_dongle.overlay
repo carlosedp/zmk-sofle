@@ -51,13 +51,10 @@
         page-offset = <0>;
         display-offset = <0>;
         multiplex-ratio = <63>;
-        segment-remap;
-        com-invdir;
         inversion-on;
         prechargep = <0x22>;
-        //Comment out to draw in reverse (upside down)
-        // segment-remap;
-        //Comment out to flip horizontally
-        // com-invdir;
+        // Comment both lines below to draw in upside down orientation
+        segment-remap;
+        com-invdir;
 	};
 };
